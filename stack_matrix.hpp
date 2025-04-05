@@ -10,10 +10,10 @@
 #include <stdexcept>
 #include <utility>
 
-namespace Utility {
+namespace Utility::Stack {
 
-    template <std::floating_point T, std::size_t N, std::size_t M>
-    struct StackMatrix {
+    template <typename T, std::size_t N, std::size_t M>
+    struct Matrix {
         using Data = std::array<std::array<T, M>, N>;
         using Init = std::initializer_list<std::initializer_list<T>>;
         using Row = std::array<T, M>;
@@ -43,51 +43,51 @@ namespace Utility {
 
         ~Matrix() noexcept = default;
 
-        Row const& operator[](std::size_t const row)
+        Row const& operator[](this Matrix const& self, std::size_t const row)
         {
             if (row > N) {
                 throw std::runtime_error{"Out of bounds"};
             }
-            return this->data[row];
+            return self.data[row];
         }
 
-        Row& operator[](std::size_t const row)
+        Row& operator[](this Matrix& self, std::size_t const row)
         {
             if (row > N) {
                 throw std::runtime_error{"Out of bounds"};
             }
-            return this->data[row];
+            return self.data[row];
         }
 
-        T const& operator[](std::size_t const row, std::size_t const col)
+        T const& operator[](this Matrix const& self, std::size_t const row, std::size_t const col)
         {
             if (row > N || col > M) {
                 throw std::runtime_error{"Out of bounds"};
             }
-            return this->data[row][col];
+            return self.data[row][col];
         }
 
-        T& operator[](std::size_t const row, std::size_t const col)
+        T& operator[](this Matrix& self, std::size_t const row, std::size_t const col)
         {
             if (row > N || col > M) {
                 throw std::runtime_error{"Out of bounds"};
             }
-            return this->data[row][col];
+            return self.data[row][col];
         }
 
-        bool operator<=>(Matrix const& other) noexcept = default;
+        bool operator<=>(this Matrix const& self, Matrix const& other) noexcept = default;
 
-        Matrix& operator=(Init const init)
+        Matrix& operator=(this Matrix& self, Init const init)
         {
-            this->data = make_data(init);
-            return *this;
+            self.data = make_data(init);
+            return self;
         }
 
-        void print() noexcept
+        void print(this Matrix const& self) noexcept
         {
             std::print("[");
-            if (!this->data.empty()) {
-                for (auto const& row : this->data) {
+            if (!self.data.empty()) {
+                for (auto const& row : self.data) {
                     std::print("[");
                     if (!row.empty()) {
                         for (auto const col : row) {
@@ -98,7 +98,7 @@ namespace Utility {
                         }
                     }
                     std::print("]");
-                    if (row != this->data.back()) {
+                    if (row != self.data.back()) {
                         std::print(",\n");
                     }
                 }
@@ -106,76 +106,76 @@ namespace Utility {
             std::print("]\n");
         }
 
-        bool is_square() noexcept
+        bool is_square(this Matrix const& self) noexcept
         {
             return N == M;
         }
 
-        std::size_t rows() noexcept
+        std::size_t rows(this Matrix const& self) noexcept
         {
             return N;
         }
 
-        std::size_t cols() noexcept
+        std::size_t cols(this Matrix const& self) noexcept
         {
             return M;
         }
 
-        Matrix& operator+=(Matrix const& other) noexcept
+        Matrix& operator+=(this Matrix& self, Matrix const& other) noexcept
         {
-            *this = matrix_sum(*this, other);
-            return *this;
+            self = matrix_sum(self, other);
+            return self;
         }
 
-        Matrix& operator-=(Matrix const& other) noexcept
+        Matrix& operator-=(this Matrix& self, Matrix const& other) noexcept
         {
-            *this = matrix_difference(*this, other);
-            return *this;
+            self = matrix_difference(self, other);
+            return self;
         }
 
-        Matrix& operator*=(Matrix const& other)
+        Matrix& operator*=(this Matrix& self, Matrix const& other)
         {
-            *this = matrix_product(*this, other);
-            return *this;
+            self = matrix_product(self, other);
+            return self;
         }
 
-        Matrix& operator*=(T const scale) noexcept
+        Matrix& operator*=(this Matrix& self, T const scale) noexcept
         {
-            *this = matrix_scale(*this, scale);
-            return *this;
+            self = matrix_scale(self, scale);
+            return self;
         }
 
-        Matrix& operator/=(T const scale)
+        Matrix& operator/=(this Matrix& self, T const scale)
         {
             if (scale == static_cast<T>(0)) {
                 throw std::runtime_error{"Division by 0!"};
             }
 
-            *this = matrix_scale(*this, 1 / scale);
-            return *this;
+            self = matrix_scale(self, 1 / scale);
+            return self;
         }
 
-        Matrix& operator/=(Matrix const& other)
+        Matrix& operator/=(this Matrix& self, Matrix const& other)
         {
             try {
-                *this = matrix_product(*this, matrix_inverse(other));
-                return *this;
+                self = matrix_product(self, matrix_inverse(other));
+                return self;
             }
             catch (std::runtime_error const& error) {
                 throw error;
             }
         }
 
-        Matrix& operator^=(T const power)
+        Matrix& operator^=(this Matrix& self, T const power)
         {
-            *this = matrix_power(*this, power);
-            return *this;
+            self = matrix_power(self, power);
+            return self;
         }
 
         Data data{};
     };
 
-    template <std::floating_point T, std::size_t N>
+    template <typename T, std::size_t N>
     Matrix<T, N, N> make_eye() noexcept
     {
         Matrix<T, N, N> result;
@@ -187,7 +187,7 @@ namespace Utility {
         return result;
     }
 
-    template <std::floating_point T, std::size_t N>
+    template <typename T, std::size_t N>
     Matrix<T, N - 1, N - 1> matrix_minor(Matrix<T, N, N> const& matrix, std::size_t const row, std::size_t const column)
     {
         if (row >= N || column >= N) {
@@ -216,7 +216,7 @@ namespace Utility {
         }
     }
 
-    template <std::floating_point T, std::size_t N>
+    template <typename T, std::size_t N>
     Matrix<T, N, N> matrix_complement(Matrix<T, N, N> const& matrix)
     {
         if constexpr (N == 1) {
@@ -239,7 +239,7 @@ namespace Utility {
         }
     }
 
-    template <std::floating_point T, std::size_t N>
+    template <typename T, std::size_t N>
     Matrix<T, N, N> matrix_adjoint(Matrix<T, N, N> const& matrix)
     {
         try {
@@ -250,7 +250,7 @@ namespace Utility {
         }
     }
 
-    template <std::floating_point T, std::size_t N, std::size_t M>
+    template <typename T, std::size_t N, std::size_t M>
     Matrix<T, M, N> matrix_transpose(Matrix<T, N, M> const& matrix) noexcept
     {
         Matrix<T, M, N> result{};
@@ -262,7 +262,7 @@ namespace Utility {
         return result;
     }
 
-    template <std::floating_point T, std::size_t N>
+    template <typename T, std::size_t N>
     T matrix_det(Matrix<T, N, N> const& matrix)
     {
         if constexpr (N == 1) {
@@ -287,7 +287,7 @@ namespace Utility {
         }
     }
 
-    template <std::floating_point T, std::size_t N>
+    template <typename T, std::size_t N>
     Matrix<T, N, N> matrix_inverse(Matrix<T, N, N> const& matrix)
     {
         try {
@@ -298,7 +298,7 @@ namespace Utility {
         }
     }
 
-    template <std::floating_point T, std::size_t N>
+    template <typename T, std::size_t N>
     Matrix<T, N, N> matrix_upper_triangular(Matrix<T, N, N> const& matrix)
     {
         try {
@@ -309,7 +309,7 @@ namespace Utility {
         }
     }
 
-    template <std::floating_point T, std::size_t N>
+    template <typename T, std::size_t N>
     Matrix<T, N, N> matrix_lower_triangular(Matrix<T, N, N> const& matrix)
     {
         if constexpr (N == 1) {
@@ -336,7 +336,7 @@ namespace Utility {
         }
     }
 
-    template <std::floating_point T, std::size_t N, std::size_t M>
+    template <typename T, std::size_t N, std::size_t M>
     Matrix<T, N, M> matrix_sum(Matrix<T, N, M> const& left, Matrix<T, N, M> const& right) noexcept
 
     {
@@ -349,7 +349,7 @@ namespace Utility {
         return result;
     }
 
-    template <std::floating_point T, std::size_t N, std::size_t M>
+    template <typename T, std::size_t N, std::size_t M>
     Matrix<T, N, M> matrix_difference(Matrix<T, N, M> const& left, Matrix<T, N, M> const& right) noexcept
 
     {
@@ -362,7 +362,7 @@ namespace Utility {
         return result;
     }
 
-    template <std::floating_point T, std::size_t N, std::size_t M>
+    template <typename T, std::size_t N, std::size_t M>
     Matrix<T, N, M> matrix_scale(Matrix<T, N, M> const& matrix, T const scale) noexcept
     {
         Matrix<T, N, M> result;
@@ -374,7 +374,7 @@ namespace Utility {
         return result;
     }
 
-    template <std::floating_point T, std::size_t N, std::size_t M, std::size_t P>
+    template <typename T, std::size_t N, std::size_t M, std::size_t P>
     Matrix<T, N, P> matrix_product(Matrix<T, N, M> const& left, Matrix<T, M, P> const& right) noexcept
 
     {
@@ -391,7 +391,7 @@ namespace Utility {
         return result;
     }
 
-    template <std::floating_point T, std::size_t N>
+    template <typename T, std::size_t N>
     Matrix<T, N, N> matrix_power(Matrix<T, N, N> const& matrix, T const power) noexcept
     {
         if (power == 1) {
@@ -405,7 +405,7 @@ namespace Utility {
         return result;
     }
 
-    template <std::floating_point T, std::size_t N, std::size_t M>
+    template <typename T, std::size_t N, std::size_t M>
     std::size_t matrix_rank(Matrix<T, N, M> const& matrix) noexcept
     {
         if constexpr (N == M) {
@@ -422,44 +422,44 @@ namespace Utility {
         }
     }
 
-    template <std::floating_point T, std::size_t N>
+    template <typename T, std::size_t N>
     std::array<T, N> matrix_eigvals(Matrix<T, N, N> const& matrix) noexcept
     {}
 
-    template <std::floating_point T, std::size_t N, std::size_t M>
+    template <typename T, std::size_t N, std::size_t M>
     Matrix<T, N, M> operator+(Matrix<T, N, M> const& left, Matrix<T, N, M> const& right) noexcept
 
     {
         return matrix_sum(left, right);
     }
 
-    template <std::floating_point T, std::size_t N, std::size_t M>
+    template <typename T, std::size_t N, std::size_t M>
     Matrix<T, N, M> operator-(Matrix<T, N, M> const& left, Matrix<T, N, M> const& right) noexcept
 
     {
         return matrix_difference(left, right);
     }
 
-    template <std::floating_point T, std::size_t N, std::size_t M, std::size_t P>
+    template <typename T, std::size_t N, std::size_t M, std::size_t P>
     Matrix<T, N, P> operator*(Matrix<T, N, M> const& left, Matrix<T, M, P> const& right) noexcept
 
     {
         return matrix_product(left, right);
     }
 
-    template <std::floating_point T, std::size_t N, std::size_t M>
+    template <typename T, std::size_t N, std::size_t M>
     Matrix<T, N, M> operator*(T const scale, Matrix<T, N, M> const& matrix) noexcept
     {
         return matrix_scale(matrix, scale);
     }
 
-    template <std::floating_point T, std::size_t N, std::size_t M>
+    template <typename T, std::size_t N, std::size_t M>
     Matrix<T, N, M> operator*(Matrix<T, N, M> const& matrix, T const scale) noexcept
     {
         return matrix_scale(matrix, scale);
     }
 
-    template <std::floating_point T, std::size_t N, std::size_t M>
+    template <typename T, std::size_t N, std::size_t M>
     Matrix<T, N, M> operator/(Matrix<T, N, M> const& matrix, T const scale)
     {
         if (scale == static_cast<T>(0)) {
@@ -468,7 +468,7 @@ namespace Utility {
         return matrix_scale(matrix, 1 / scale);
     }
 
-    template <std::floating_point T, std::size_t N>
+    template <typename T, std::size_t N>
     Matrix<T, N, N> operator/(Matrix<T, N, N> const& left, Matrix<T, N, N> const& right)
     {
         try {
@@ -479,12 +479,12 @@ namespace Utility {
         }
     }
 
-    template <std::floating_point T, std::size_t N>
+    template <typename T, std::size_t N>
     Matrix<T, N, N> operator^(Matrix<T, N, N> const& matrix, T const power)
     {
         return matrix_power(matrix, power);
     }
 
-}; // namespace Utility
+}; // namespace Utility::Stack
 
 #endif // STACK_MATRIX_HPP

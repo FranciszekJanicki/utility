@@ -9,50 +9,50 @@ namespace Utility {
 
     template <typename T>
     struct PID {
-        T operator()(T const error, T const sampling_time) noexcept
+        T operator()(this PID& self, T const error, T const sampling_time) noexcept
         {
-            return this->get_sat_control(error, sampling_time);
+            return self.get_sat_control(error, sampling_time);
         }
 
-        T get_sat_control(T const error, T const sampling_time) noexcept
+        T get_sat_control(this PID& self, T const error, T const sampling_time) noexcept
         {
-            auto const control = this->get_control(error, sampling_time);
-            auto const sat_control = std::clamp(control, -this->saturation, this->saturation);
+            auto const control = self.get_control(error, sampling_time);
+            auto const sat_control = std::clamp(control, -self.saturation, self.saturation);
 
-            this->prev_sat_error = std::exchange(this->sat_error, control - sat_control);
-            this->prev_error = error;
+            self.prev_sat_error = std::exchange(self.sat_error, control - sat_control);
+            self.prev_error = error;
 
             return sat_control;
         }
 
-        T get_control(T const error, T const sampling_time) noexcept
+        T get_control(this PID& self, T const error, T const sampling_time) noexcept
         {
-            return this->get_proportion(error) + this->get_integral(error, sampling_time) +
-                   this->get_derivative(error, sampling_time);
+            return self.get_proportion(error) + self.get_integral(error, sampling_time) +
+                   self.get_derivative(error, sampling_time);
         }
 
-        T get_proportion(T const error) noexcept
+        T get_proportion(this PID& self, T const error) noexcept
         {
-            return this->proportion_gain * error;
+            return self.proportion_gain * error;
         }
 
-        T get_derivative(T const error, T const sampling_time) noexcept
+        T get_derivative(this PID& self, T const error, T const sampling_time) noexcept
         {
-            this->error_derivative = Utility::differentiate(error,
-                                                            this->prev_error,
-                                                            sampling_time,
-                                                            this->error_derivative,
-                                                            this->time_constant);
+            self.error_derivative = Utility::differentiate(error,
+                                                           self.prev_error,
+                                                           sampling_time,
+                                                           self.error_derivative,
+                                                           self.time_constant);
 
-            return this->derivative_gain * this->error_derivative;
+            return self.derivative_gain * self.error_derivative;
         }
 
-        T get_integral(T const error, T const sampling_time) noexcept
+        T get_integral(this PID& self, T const error, T const sampling_time) noexcept
         {
-            this->error_integral += Utility::integrate(error, this->prev_error, sampling_time);
-            this->sat_error_integral += Utility::integrate(this->sat_error, this->prev_sat_error, sampling_time);
+            self.error_integral += Utility::integrate(error, self.prev_error, sampling_time);
+            self.sat_error_integral += Utility::integrate(self.sat_error, self.prev_sat_error, sampling_time);
 
-            return this->integral_gain * this->error_integral - this->control_gain * this->sat_error_integral;
+            return self.integral_gain * self.error_integral - self.control_gain * self.sat_error_integral;
         }
 
         // basic PID parameters

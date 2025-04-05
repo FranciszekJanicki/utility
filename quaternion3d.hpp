@@ -6,100 +6,101 @@
 #include <concepts>
 #include <cstdlib>
 #include <stdexcept>
+#include <tuple>
 #include <utility>
 
 namespace Utility {
 
     template <typename T>
     struct Quaternion3D {
-        Quaternion3D conjugated() const noexcept
+        Quaternion3D conjugated(this Quaternion3D const& self) noexcept
         {
-            return Quaternion3D{this->w, -this->x, -this->y, -this->z};
+            return Quaternion3D{self.w, -self.x, -self.y, -self.z};
         }
 
-        void conjugate() noexcept
+        void conjugate(this Quaternion3D& self) noexcept
         {
-            this->x = -this->x;
-            this->y = -this->y;
-            this->z = -this->z;
+            self.x = -self.x;
+            self.y = -self.y;
+            self.z = -self.z;
         }
 
-        T magnitude() const noexcept
+        T magnitude(this Quaternion3D const& self) noexcept
         {
-            return std::sqrt(std::pow(this->w, 2) + std::pow(this->x, 2) + std::pow(this->y, 2) + std::pow(this->z, 2));
+            return std::sqrt(std::pow(self.w, 2) + std::pow(self.x, 2) + std::pow(self.y, 2) + std::pow(self.z, 2));
         }
 
-        Quaternion3D normalized() const noexcept
+        Quaternion3D normalized(this Quaternion3D const& self) noexcept
         {
-            const auto im{static_cast<T>(1) / this->magnitude()};
-            return Quaternion3D{this->w * im, this->x * im, this->y * im, this->z * im};
+            const auto im{static_cast<T>(1) / self.magnitude()};
+            return Quaternion3D{self.w * im, self.x * im, self.y * im, self.z * im};
         }
 
-        void normalize() noexcept
+        void normalize(this Quaternion3D& self) noexcept
         {
-            const auto im{static_cast<T>(1) / this->magnitude()};
-            *this *= im;
+            const auto im{static_cast<T>(1) / self.magnitude()};
+            self *= im;
         }
 
-        Quaternion3D& operator+=(Quaternion3D const& other)
+        Quaternion3D& operator+=(this Quaternion3D& self, Quaternion3D const& other)
         {
-            this->w += other.w;
-            this->x += other.x;
-            this->y += other.y;
-            this->z += other.z;
-            return *this;
+            self.w += other.w;
+            self.x += other.x;
+            self.y += other.y;
+            self.z += other.z;
+            return self;
         }
 
-        Quaternion3D& operator-=(Quaternion3D const& other)
+        Quaternion3D& operator-=(this Quaternion3D& self, Quaternion3D const& other)
         {
-            this->w -= other.w;
-            this->x -= other.x;
-            this->y -= other.y;
-            this->z -= other.z;
-            return *this;
+            self.w -= other.w;
+            self.x -= other.x;
+            self.y -= other.y;
+            self.z -= other.z;
+            return self;
         }
 
-        Quaternion3D& operator*=(Quaternion3D const& other)
+        Quaternion3D& operator*=(this Quaternion3D& self, Quaternion3D const& other)
         {
-            this->w = this->w * other.w - this->x * other.x - this->y * other.y - this->z * other.z;
-            this->x = this->w * other.x + this->x * other.w + this->y * other.z - this->z * other.y;
-            this->y = this->w * other.y - this->x * other.z + this->y * other.w + this->z * other.x;
-            this->z = this->w * other.z + this->x * other.y - this->y * other.x + this->z * other.w;
-            return *this;
+            self.w = self.w * other.w - self.x * other.x - self.y * other.y - self.z * other.z;
+            self.x = self.w * other.x + self.x * other.w + self.y * other.z - self.z * other.y;
+            self.y = self.w * other.y - self.x * other.z + self.y * other.w + self.z * other.x;
+            self.z = self.w * other.z + self.x * other.y - self.y * other.x + self.z * other.w;
+            return self;
         }
 
-        Quaternion3D& operator*=(T const factor)
+        Quaternion3D& operator*=(this Quaternion3D& self, T const factor)
         {
-            this->w *= factor;
-            this->x *= factor;
-            this->y *= factor;
-            this->z *= factor;
-            return *this;
+            self.w *= factor;
+            self.x *= factor;
+            self.y *= factor;
+            self.z *= factor;
+            return self;
         }
 
-        Quaternion3D& operator/=(T const factor)
+        Quaternion3D& operator/=(this Quaternion3D& self, T const factor)
         {
             if (factor == static_cast<T>(0)) {
-                throw std::runtime_error{"Division by 0"};
+                throw std::runtime_error{"Division by zero"};
             }
 
-            this->w /= factor;
-            this->x /= factor;
-            this->y /= factor;
-            this->z /= factor;
-            return *this;
+            self.w /= factor;
+            self.x /= factor;
+            self.y /= factor;
+            self.z /= factor;
+            return self;
         }
 
         template <typename C>
-        explicit operator Quaternion3D<C>() const noexcept
+        explicit operator Quaternion3D<C>(this Quaternion3D const& self) noexcept
         {
-            return Quaternion3D<C>{static_cast<C>(this->w),
-                                   static_cast<C>(this->x),
-                                   static_cast<C>(this->y),
-                                   static_cast<C>(this->z)};
+            return Quaternion3D<C>{static_cast<C>(self.w),
+                                   static_cast<C>(self.x),
+                                   static_cast<C>(self.y),
+                                   static_cast<C>(self.z)};
         }
 
-        bool operator<=>(Quaternion3D const& other) const noexcept = default;
+        bool operator<=>(this Quaternion3D const& self, Quaternion3D const& other) noexcept = default;
 
         T w{};
         T x{};
@@ -147,7 +148,7 @@ namespace Utility {
     Quaternion3D<T> operator/(Quaternion3D<T> const& quaternion, T const factor)
     {
         if (factor == static_cast<T>(0)) {
-            throw std::runtime_error{"Division by 0"};
+            throw std::runtime_error{"Disivion by zero"};
         }
 
         return Quaternion3D<T>{quaternion.w / factor,

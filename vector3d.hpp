@@ -4,6 +4,7 @@
 #include "quaternion3d.hpp"
 #include <cmath>
 #include <compare>
+#include <concepts>
 #include <exception>
 #include <stdexcept>
 #include <utility>
@@ -12,90 +13,90 @@ namespace Utility {
 
     template <typename T>
     struct Vector3D {
-        T distance(Vector3D const& other) const noexcept
+        T distance(this Vector3D const& self, Vector3D const& other) noexcept
         {
-            return std::sqrt(std::pow(this->x - other.x, 2) + std::pow(this->y - other.y, 2) +
-                             std::pow(this->z - other.z, 2));
+            return std::sqrt(std::pow(self.x - other.x, 2) + std::pow(self.y - other.y, 2) +
+                             std::pow(self.z - other.z, 2));
         }
 
-        T magnitude() const noexcept
+        T magnitude(this Vector3D const& self) noexcept
         {
-            return std::sqrt(std::pow(this->x, 2) + std::pow(this->y, 2) + std::pow(this->z, 2));
+            return std::sqrt(std::pow(self.x, 2) + std::pow(self.y, 2) + std::pow(self.z, 2));
         }
 
-        Vector3D rotated(Quaternion3D<T> const& quaternion) const noexcept
+        Vector3D rotated(this Vector3D const& self, Quaternion3D<T> const& quaternion) noexcept
         {
-            Quaternion3D p(0, this->x, this->y, this->z);
+            Quaternion3D p(0, self.x, self.y, self.z);
             p *= quaternion;
             p *= quaternion.conjugated();
             return Vector3D{p.x, p.y, p.z};
         }
 
-        void rotate(Quaternion3D<T> const& quaternion) noexcept
+        void rotate(this Vector3D& self, Quaternion3D<T> const& quaternion) noexcept
         {
-            Quaternion3D p(0, this->x, this->y, this->z);
+            Quaternion3D p(0, self.x, self.y, self.z);
             p *= quaternion;
             p *= quaternion.conjugated();
-            this->x = p.x;
-            this->y = p.y;
-            this->z = p.z;
+            self.x = p.x;
+            self.y = p.y;
+            self.z = p.z;
         }
 
-        Vector3D normalized() const noexcept
+        Vector3D normalized(this Vector3D const& self) noexcept
         {
-            const auto im{T{1} / this->magnitude()};
-            return Vector3D{this->x * im, this->y * im, this->z * im};
+            const auto im{T{1} / self.magnitude()};
+            return Vector3D{self.x * im, self.y * im, self.z * im};
         }
 
-        void normalize() noexcept
+        void normalize(this Vector3D& self) noexcept
         {
-            const auto im{T{1} / this->magnitude()};
-            *this *= im;
+            const auto im{T{1} / self.magnitude()};
+            self *= im;
         }
 
-        Vector3D& operator+=(Vector3D const& other) noexcept
+        Vector3D& operator+=(this Vector3D& self, Vector3D const& other) noexcept
         {
-            this->x += other.x;
-            this->y += other.y;
-            this->z += other.z;
-            return *this;
+            self.x += other.x;
+            self.y += other.y;
+            self.z += other.z;
+            return self;
         }
 
-        Vector3D& operator-=(Vector3D const& other) noexcept
+        Vector3D& operator-=(this Vector3D& self, Vector3D const& other) noexcept
         {
-            this->x -= other.x;
-            this->y -= other.y;
-            this->z -= other.z;
-            return *this;
+            self.x -= other.x;
+            self.y -= other.y;
+            self.z -= other.z;
+            return self;
         }
 
-        Vector3D& operator*=(T const factor)
+        Vector3D& operator*=(this Vector3D& self, T const factor)
         {
-            this->x *= factor;
-            this->y *= factor;
-            this->z *= factor;
-            return *this;
+            self.x *= factor;
+            self.y *= factor;
+            self.z *= factor;
+            return self;
         }
 
-        Vector3D& operator/=(T const factor)
+        Vector3D& operator/=(this Vector3D& self, T const factor)
         {
             if (factor == static_cast<T>(0)) {
-                throw std::runtime_error{"Division by 0"};
+                throw std::runtime_error{"Disivion by 0"};
             }
 
-            this->x *= factor;
-            this->y *= factor;
-            this->z *= factor;
-            return *this;
+            self.x *= factor;
+            self.y *= factor;
+            self.z *= factor;
+            return self;
         }
 
         template <typename C>
-        explicit operator Vector3D<C>() const noexcept
+        explicit operator Vector3D<C>(this Vector3D const& self) noexcept
         {
-            return Vector3D<C>{static_cast<C>(this->x), static_cast<C>(this->y), static_cast<C>(this->z)};
+            return Vector3D<C>{static_cast<C>(self.x), static_cast<C>(self.y), static_cast<C>(self.z)};
         }
 
-        bool operator<=>(Vector3D const& other) const noexcept = default;
+        bool operator<=>(this Vector3D const& self, Vector3D const& other) noexcept = default;
 
         T x{};
         T y{};
@@ -103,34 +104,34 @@ namespace Utility {
     };
 
     template <typename T>
-    inline Vector3D<T> operator+(Vector3D<T> const& left, Vector3D<T> const& right) noexcept
+    Vector3D<T> operator+(Vector3D<T> const& left, Vector3D<T> const& right) noexcept
     {
         return Vector3D<T>{left.x + right.x, left.y + right.y, left.z + right.z};
     }
 
     template <typename T>
-    inline Vector3D<T> operator-(Vector3D<T> const& left, Vector3D<T> const& right) noexcept
+    Vector3D<T> operator-(Vector3D<T> const& left, Vector3D<T> const& right) noexcept
     {
         return Vector3D<T>{left.x - right.x, left.y - right.y, left.z - right.z};
     }
 
     template <typename T>
-    inline Vector3D<T> operator*(T const factor, Vector3D<T> const& vector)
+    Vector3D<T> operator*(T const factor, Vector3D<T> const& vector)
     {
         return Vector3D<T>{vector.x * factor, vector.y * factor, vector.z * factor};
     }
 
     template <typename T>
-    inline Vector3D<T> operator*(Vector3D<T> const& vector, T const factor)
+    Vector3D<T> operator*(Vector3D<T> const& vector, T const factor)
     {
         return factor * vector;
     }
 
     template <typename T>
-    inline Vector3D<T> operator/(Vector3D<T> const& vector, T const factor)
+    Vector3D<T> operator/(Vector3D<T> const& vector, T const factor)
     {
         if (factor == static_cast<T>(0)) {
-            throw std::runtime_error{"Division by 0"};
+            throw std::runtime_error{"Division by zero"};
         }
 
         return Vector3D<T>{vector.x / factor, vector.y / factor, vector.z / factor};

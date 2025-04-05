@@ -1,6 +1,8 @@
 #ifndef UTILITY_HPP
 #define UTILITY_HPP
 
+#include "quaternion3d.hpp"
+#include "vector3d.hpp"
 #include <algorithm>
 #include <array>
 #include <bit>
@@ -18,12 +20,6 @@
 namespace Utility {
 
     template <typename T>
-    concept Trivial = std::is_trivial_v<T>;
-
-    template <typename T>
-    concept Arithmetic = std::is_arithmetic_v<T>;
-
-    template <std::floating_point T>
     inline T differentiate(T const value,
                            T const prev_value,
                            T const sampling_time,
@@ -36,7 +32,7 @@ namespace Utility {
         return (value - prev_value + prev_derivative * time_constant) / (time_constant + sampling_time);
     }
 
-    template <std::floating_point T>
+    template <typename T>
     inline T differentiate(T const value, T const prev_value, T const sampling_time)
     {
         if (sampling_time == static_cast<T>(0)) {
@@ -45,19 +41,19 @@ namespace Utility {
         return (value - prev_value) / sampling_time;
     }
 
-    template <std::floating_point T>
+    template <typename T>
     inline T integrate(T const value, T const prev_value, T const sampling_time) noexcept
     {
         return (value + prev_value) * static_cast<T>(0.5F) * sampling_time;
     }
 
-    template <std::floating_point T>
+    template <typename T>
     inline T degrees_to_radians(T const degrees) noexcept
     {
         return degrees * std::numbers::pi_v<T> / static_cast<T>(360.0);
     }
 
-    template <std::floating_point T>
+    template <typename T>
     inline T radians_to_degrees(T const radians) noexcept
     {
         return radians * static_cast<T>(360.0) / std::numbers::pi_v<T>;
@@ -70,7 +66,8 @@ namespace Utility {
                            std::uint8_t const write_position) noexcept
     {
         UInt mask = ((1U << write_size) - 1U) << (write_position - write_size + 1U);
-        UInt temp = (write_data << (write_position - write_size + 1U)) & mask;
+        UInt temp = (write_data << (write_position - write_size + 1U));
+        temp &= mask;
         data &= ~mask;
         data |= temp;
     }
@@ -109,12 +106,12 @@ namespace Utility {
 
     inline std::array<std::uint8_t, 2UL> word_to_big_endian_bytes(std::uint16_t const word) noexcept
     {
-        return {static_cast<std::uint8_t>(word >> 8UL), static_cast<std::uint8_t>(word)};
+        return std::array<std::uint8_t, 2UL>{static_cast<std::uint8_t>(word >> 8UL), static_cast<std::uint8_t>(word)};
     }
 
     inline std::array<std::uint8_t, 2UL> word_to_little_endian_bytes(std::uint16_t const word) noexcept
     {
-        return {static_cast<std::uint8_t>(word), static_cast<std::uint8_t>(word >> 8UL)};
+        return std::array<std::uint8_t, 2UL>{static_cast<std::uint8_t>(word), static_cast<std::uint8_t>(word >> 8UL)};
     }
 
     inline std::uint32_t big_endian_bytes_to_dword(std::array<std::uint8_t, 4UL> const bytes) noexcept
@@ -131,21 +128,21 @@ namespace Utility {
 
     inline std::array<std::uint8_t, 4UL> dword_to_big_endian_bytes(std::uint32_t const dword) noexcept
     {
-        return {static_cast<std::uint8_t>(dword >> 24UL),
-                static_cast<std::uint8_t>(dword >> 16UL),
-                static_cast<std::uint8_t>(dword >> 8UL),
-                static_cast<std::uint8_t>(dword)};
+        return std::array<std::uint8_t, 4UL>{static_cast<std::uint8_t>(dword >> 24UL),
+                                             static_cast<std::uint8_t>(dword >> 16UL),
+                                             static_cast<std::uint8_t>(dword >> 8UL),
+                                             static_cast<std::uint8_t>(dword)};
     }
 
     inline std::array<std::uint8_t, 4UL> dword_to_little_endian_bytes(std::uint32_t const dword) noexcept
     {
-        return {static_cast<std::uint8_t>(dword),
-                static_cast<std::uint8_t>(dword >> 8UL),
-                static_cast<std::uint8_t>(dword >> 16UL),
-                static_cast<std::uint8_t>(dword >> 24UL)};
+        return std::array<std::uint8_t, 4UL>{static_cast<std::uint8_t>(dword),
+                                             static_cast<std::uint8_t>(dword >> 8UL),
+                                             static_cast<std::uint8_t>(dword >> 16UL),
+                                             static_cast<std::uint8_t>(dword >> 24UL)};
     }
 
-    template <Arithmetic From, Arithmetic To>
+    template <typename From, typename To>
     inline To
     rescale(From const from_value, From const from_min, From const from_max, To const to_min, To const to_max) noexcept
     {
@@ -230,6 +227,72 @@ namespace Utility {
                                             std::uint32_t const clock_divider = 0UL) noexcept
     {
         return time_us / 1000000UL * clock_freq_hz / ((prescaler + 1UL) * (clock_divider + 1UL)) - 1UL;
+    }
+
+    template <typename T>
+    inline T accel_to_roll(Vector3D<T> const& accel) noexcept
+    {
+        return std::atan2(accel.y, accel.z) * 180.0F / std::numbers::pi_v<T>;
+    }
+
+    template <typename T>
+    inline T accel_to_pitch(Vector3D<T> const& accel) noexcept
+    {
+        return -(std::atan2(accel.x, std::sqrt(accel.y * accel.y + accel.z * accel.z)) * 180.0F) /
+               std::numbers::pi_v<T>;
+    }
+
+    template <typename T>
+    inline T accel_to_yaw(Vector3D<T> const& accel) noexcept
+    {
+        return static_cast<T>(0);
+    }
+
+    template <typename T>
+    inline Vector3D<T> accel_to_roll_pitch_yaw(Vector3D<T> const& accel) noexcept
+    {
+        return Vector3D<T>{.x = accel_to_roll(accel), .y = accel_to_pitch(accel), .z = accel_to_yaw(accel)};
+    }
+
+    template <typename T>
+    inline Vector3D<T> quaternion_to_gravity(Quaternion3D<T> const& quaternion) noexcept
+    {
+        return Vector3D<T>{.x = 2 * (quaternion.x * quaternion.z - quaternion.w * quaternion.y),
+                           .y = 2 * (quaternion.w * quaternion.x + quaternion.y * quaternion.z),
+                           .z = quaternion.w * quaternion.w - quaternion.x * quaternion.x -
+                                quaternion.y * quaternion.y + quaternion.z * quaternion.z};
+    }
+
+    template <typename T>
+    inline T quaternion_to_roll(Quaternion3D<T> const& quaternion) noexcept
+    {
+        auto const gravity = quaternion_to_gravity(quaternion);
+
+        return std::atan2(gravity.y, gravity.z);
+    }
+
+    template <typename T>
+    inline T quaternion_to_pitch(Quaternion3D<T> const& quaternion) noexcept
+    {
+        auto const gravity = quaternion_to_gravity(quaternion);
+        auto const pitch = std::atan2(gravity.x, std::sqrt(gravity.y * gravity.y + gravity.z * gravity.z));
+
+        return (gravity.z < 0) ? (pitch > 0 ? std::numbers::pi_v<T> - pitch : -std::numbers::pi_v<T> - pitch) : pitch;
+    }
+
+    template <typename T>
+    inline T quaternion_to_yaw(Quaternion3D<T> const& quaternion) noexcept
+    {
+        return std::atan2(2 * quaternion.x * quaternion.y - 2 * quaternion.w * quaternion.z,
+                          2 * quaternion.w * quaternion.w + 2 * quaternion.x * quaternion.x - 1);
+    }
+
+    template <typename T>
+    inline Vector3D<T> quaternion_to_roll_pitch_yaw(Quaternion3D<T> const& quaternion) noexcept
+    {
+        return Vector3D<T>{.x = quaternion_to_roll(quaternion),
+                           .y = quaternion_to_pitch(quaternion),
+                           .z = quaternion_to_yaw(quaternion)};
     }
 
 }; // namespace Utility

@@ -4,16 +4,16 @@
 #include "stack_matrix.hpp"
 
 namespace Utility {
-    template <std::floating_point T, std::size_t STATES, std::size_t INPUTS>
+    template <typename T, std::size_t STATES, std::size_t INPUTS>
     struct StateRegulator {
     public:
         template <std::size_t N, std::size_t M>
         using Matrix = StackMatrix<T, N, M>;
 
-        operator()(Matrix<1UL, INPUTS> const& input, Matrix<STATES, 1UL> const& state)
+        operator()(this StateRegulator & self, Matrix<1UL, INPUTS> const& input, Matrix<STATES, 1UL> const& state)
         {
             try {
-                return input - this->state_gain * state;
+                return input - self.state_gain * state;
             }
             catch (std::runtime_error const& error) {
                 throw error;

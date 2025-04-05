@@ -5,40 +5,40 @@
 
 namespace Utility {
 
-    template <std::floating_point T, std::size_t STATES, std::size_t CONTROLS = 1UL, std::size_t MEASUREMENTS = 1UL>
+    template <typename T, std::size_t STATES, std::size_t CONTROLS = 1UL, std::size_t MEASUREMENTS = 1UL>
     struct StateObserver {
     public:
         template <std::size_t N, std::size_t M>
         using Matrix = StackMatrix<T, N, M>;
 
-        Matrix<STATES, 1UL> operator()(Matrix<1UL, CONTROLS> const& control,
+        Matrix<STATES, 1UL> operator()(this StateObserver& self,
+                                       Matrix<1UL, CONTROLS> const& control,
                                        Matrix<1UL, MEASUREMENTS> const& measurement)
         {
             try {
-                this->predict(control);
-                this->correct(measurement);
+                self.predict(control);
+                self.correct(measurement);
             }
             catch (std::runtime_error const& error) {
                 throw error;
             }
-            return this->state;
+            return self.state;
         }
 
-        void predict(Matrix<1UL, CONTROLS> const& control)
+        void predict(this StateObserver& self, Matrix<1UL, CONTROLS> const& control)
         {
             try {
-                this->state = this->state_transition * this->state + this->control_transition * control;
+                self.state = self.state_transition * self.state + self.control_transition * control;
             }
             catch (std::runtime_error const& error) {
                 throw error;
             }
         }
 
-        void predict(Matrix<1UL, MEASUREMENTS> const& measurement)
+        void predict(this StateObserver& self, Matrix<1UL, MEASUREMENTS> const& measurement)
         {
             try {
-                this->state =
-                    this->state + this->state_gain * (measurement - this->measurement_transition * this->state);
+                self.state = self.state + self.state_gain * (measurement - self.measurement_transition * self.state);
             }
             catch (std::runtime_error const& error) {
                 throw error;

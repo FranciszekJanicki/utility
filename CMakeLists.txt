@@ -8,6 +8,8 @@ target_sources(utility INTERFACE
     "state_regulator.hpp"
     "stack_matrix.hpp"
     "rotation3d.hpp"
+    "kalman.hpp"
+    "rotation3.hpp"
 )
 
 target_compile_options(utility INTERFACE

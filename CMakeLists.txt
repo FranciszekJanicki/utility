@@ -5,11 +5,11 @@ target_sources(utility INTERFACE
     "utility.hpp"
     "vector3d.hpp"
     "quaternion3d.hpp"
-    "state_regulator.hpp"
-    "stack_matrix.hpp"
+    "sfr.hpp"
+    "sfo.hpp"
+    "matrix.hpp"
     "rotation3d.hpp"
     "kalman.hpp"
-    "rotation3.hpp"
 )
 
 target_compile_options(utility INTERFACE

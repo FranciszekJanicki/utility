@@ -11,10 +11,16 @@ namespace Utility {
         template <std::size_t N, std::size_t M>
         using Mtx = Matrix<T, N, M>;
 
-        Mtx<nU, 1UL> get_control(this SFR& self, Mtx<nY, 1UL> const& y_ref, Mtx<nX, 1UL> const& x)
+        Mtx<nU, 1UL> get_control(this SFR& self,
+                                 Mtx<nY, 1UL> const& y_ref,
+                                 Mtx<nY, 1UL> const& y,
+                                 Mtx<nX, 1UL> const& x,
+                                 T const dt)
         {
             try {
-                auto const u = y_ref - self.K * x;
+                auto const e = y_ref - y;
+                auto const int_e = Utility::integrate(e, std::exchange(self.prev_e, e), dt);
+                auto const u = self.Ki * int_e - self.Kx * x;
                 return u;
             } catch (std::runtime_error const& error) {
                 throw error;
@@ -32,6 +38,7 @@ namespace Utility {
 
         /* state */
         Mtx<nX, 1UL> x = Mtx<nX, 1UL>{};
+        T prev_e = T{};
 
         /* state model */
         Mtx<nX, nX> A = Mtx<nX, nX>{};
@@ -40,7 +47,8 @@ namespace Utility {
         Mtx<1UL, nU> D = Mtx<1UL, nU>{};
 
         /* state gain */
-        Mtx<nY, nX> K = Mtx<nY, nX>{};
+        Mtx<nU, nX> Kx = Mtx<nU, nX>{};
+        Mtx<1UL, nY> Ki = Mtx<1UL, nY>{};
     };
 
 }; // namespace Utility

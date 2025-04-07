@@ -9,71 +9,66 @@ namespace Utility {
 
     template <typename T>
     struct PID {
-        T operator()(this PID& self, T const error, T const sampling_time) noexcept
+        T operator()(this PID& self, T const e, T const dt) noexcept
         {
-            return self.get_sat_control(error, sampling_time);
+            return self.get_sat_u(e, dt);
         }
 
-        T get_sat_control(this PID& self, T const error, T const sampling_time) noexcept
+        T get_sat_u(this PID& self, T const e, T const dt) noexcept
         {
-            auto const control = self.get_control(error, sampling_time);
-            auto const sat_control = std::clamp(control, -self.saturation, self.saturation);
+            auto const u = self.get_control(e, dt);
+            auto const sat_u = std::clamp(u, -self.sat_u, self.sat_u);
 
-            self.prev_sat_error = std::exchange(self.sat_error, control - sat_control);
-            self.prev_error = error;
+            self.prev_sat_e = std::exchange(self.sat_e, u - sat_u);
+            self.prev_e = e;
 
-            return sat_control;
+            return sat_u;
         }
 
-        T get_control(this PID& self, T const error, T const sampling_time) noexcept
+        T get_u(this PID& self, T const e, T const dt) noexcept
         {
-            return self.get_proportion(error) + self.get_integral(error, sampling_time) +
-                   self.get_derivative(error, sampling_time);
+            return self.get_p(e) + self.get_i(e, dt) + self.get_d(e, dt);
         }
 
-        T get_proportion(this PID& self, T const error) noexcept
+        T get_p(this PID& self, T const e) noexcept
         {
-            return self.proportion_gain * error;
+            return self.kP * e;
         }
 
-        T get_derivative(this PID& self, T const error, T const sampling_time) noexcept
+        T get_d(this PID& self, T const e, T const dt) noexcept
         {
-            self.error_derivative = Utility::differentiate(error,
-                                                           self.prev_error,
-                                                           sampling_time,
-                                                           self.error_derivative,
-                                                           self.time_constant);
+            self.dot_e = Utility::differentiate(e, self.prev_e, dt, self.dot_e, self.tD);
 
-            return self.derivative_gain * self.error_derivative;
+            return self.kD * self.dot_e;
         }
 
-        T get_integral(this PID& self, T const error, T const sampling_time) noexcept
+        T get_integral(this PID& self, T const e, T const dt) noexcept
         {
-            self.error_integral += Utility::integrate(error, self.prev_error, sampling_time);
-            self.sat_error_integral += Utility::integrate(self.sat_error, self.prev_sat_error, sampling_time);
+            self.int_e += Utility::integrate(e, self.prev_e, dt);
+            self.sat_int_e += Utility::integrate(self.sat_e, self.prev_sat_e, dt);
 
-            return self.integral_gain * self.error_integral - self.control_gain * self.sat_error_integral;
+            return self.kI * self.int_e - self.control_gain * self.sat_int_e;
         }
 
         // basic PID parameters
-        T proportion_gain{};
-        T integral_gain{};
-        T derivative_gain{};
-        T time_constant{};
+        T kP{};
+        T kI{};
+        T kD{};
+        T tD{};
 
         // anti windup parameters
-        T control_gain{};
-        T saturation{};
+        T kC{};
+        T sat{};
 
         // basic PID internal state
-        T prev_error{};
-        T error_integral{};
-        T error_derivative{};
+        T prev_e{};
+        T int_e{};
+        T dot_e{};
 
         // anti windup internal state
-        T sat_error{};
-        T prev_sat_error{};
-        T sat_error_integral{};
+        T sat_e{};
+        T prev_sat_e{};
+        T int_sat_e{};
     };
 
 }; // namespace Utility

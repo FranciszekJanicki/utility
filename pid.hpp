@@ -7,7 +7,7 @@
 
 namespace Utility {
 
-    template <typename T>
+    template <std::floating_point T>
     struct PID {
         T operator()(this PID& self, T const e, T const dt) noexcept
         {

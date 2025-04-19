@@ -19,7 +19,7 @@
 
 namespace Utility {
 
-    template <typename T>
+    template <std::floating_point T>
     inline T differentiate(T const value,
                            T const prev_value,
                            T const sampling_time,
@@ -32,7 +32,7 @@ namespace Utility {
         return (value - prev_value + prev_derivative * time_constant) / (time_constant + sampling_time);
     }
 
-    template <typename T>
+    template <std::floating_point T>
     inline T differentiate(T const value, T const prev_value, T const sampling_time)
     {
         if (sampling_time == static_cast<T>(0)) {
@@ -41,19 +41,19 @@ namespace Utility {
         return (value - prev_value) / sampling_time;
     }
 
-    template <typename T>
+    template <std::floating_point T>
     inline T integrate(T const value, T const prev_value, T const sampling_time) noexcept
     {
         return (value + prev_value) * static_cast<T>(0.5F) * sampling_time;
     }
 
-    template <typename T>
+    template <std::floating_point T>
     inline T degrees_to_radians(T const degrees) noexcept
     {
         return degrees * std::numbers::pi_v<T> / static_cast<T>(360.0);
     }
 
-    template <typename T>
+    template <std::floating_point T>
     inline T radians_to_degrees(T const radians) noexcept
     {
         return radians * static_cast<T>(360.0) / std::numbers::pi_v<T>;
@@ -142,7 +142,7 @@ namespace Utility {
                                              static_cast<std::uint8_t>(dword >> 24UL)};
     }
 
-    template <typename From, typename To>
+    template <std::floating_point From, std::floating_point To>
     inline To
     rescale(From const from_value, From const from_min, From const from_max, To const to_min, To const to_max) noexcept
     {
@@ -229,65 +229,68 @@ namespace Utility {
         return time_us / 1000000UL * clock_freq_hz / ((prescaler + 1UL) * (clock_divider + 1UL)) - 1UL;
     }
 
-    template <typename T>
+    template <std::floating_point T>
     inline T accel_to_roll(Vector3D<T> const& accel) noexcept
     {
-        return std::atan2(accel.y, accel.z) * 180.0F / std::numbers::pi_v<T>;
+        return std::atan2(accel.y, accel.z) * static_cast<T>(180) / std::numbers::pi_v<T>;
     }
 
-    template <typename T>
+    template <std::floating_point T>
     inline T accel_to_pitch(Vector3D<T> const& accel) noexcept
     {
-        return -(std::atan2(accel.x, std::sqrt(accel.y * accel.y + accel.z * accel.z)) * 180.0F) /
+        return -(std::atan2(accel.x, std::sqrt(accel.y * accel.y + accel.z * accel.z)) * static_cast<T>(180)) /
                std::numbers::pi_v<T>;
     }
 
-    template <typename T>
+    template <std::floating_point T>
     inline T accel_to_yaw(Vector3D<T> const& accel) noexcept
     {
         return static_cast<T>(0);
     }
 
-    template <typename T>
+    template <std::floating_point T>
     inline Vector3D<T> accel_to_roll_pitch_yaw(Vector3D<T> const& accel) noexcept
     {
         return Vector3D<T>{.x = accel_to_roll(accel), .y = accel_to_pitch(accel), .z = accel_to_yaw(accel)};
     }
 
-    template <typename T>
+    template <std::floating_point T>
     inline Vector3D<T> quaternion_to_gravity(Quaternion3D<T> const& quaternion) noexcept
     {
-        return Vector3D<T>{.x = 2 * (quaternion.x * quaternion.z - quaternion.w * quaternion.y),
-                           .y = 2 * (quaternion.w * quaternion.x + quaternion.y * quaternion.z),
+        // Compute gravity vector from quaternion
+        return Vector3D<T>{.x = static_cast<T>(2) * (quaternion.x * quaternion.z - quaternion.w * quaternion.y),
+                           .y = static_cast<T>(2) * (quaternion.w * quaternion.x + quaternion.y * quaternion.z),
                            .z = quaternion.w * quaternion.w - quaternion.x * quaternion.x -
                                 quaternion.y * quaternion.y + quaternion.z * quaternion.z};
     }
 
-    template <typename T>
+    template <std::floating_point T>
     inline T quaternion_to_roll(Quaternion3D<T> const& quaternion) noexcept
     {
         auto const gravity = quaternion_to_gravity(quaternion);
-
         return std::atan2(gravity.y, gravity.z);
     }
 
-    template <typename T>
+    template <std::floating_point T>
     inline T quaternion_to_pitch(Quaternion3D<T> const& quaternion) noexcept
     {
         auto const gravity = quaternion_to_gravity(quaternion);
         auto const pitch = std::atan2(gravity.x, std::sqrt(gravity.y * gravity.y + gravity.z * gravity.z));
 
-        return (gravity.z < 0) ? (pitch > 0 ? std::numbers::pi_v<T> - pitch : -std::numbers::pi_v<T> - pitch) : pitch;
+        return (gravity.z < static_cast<T>(0))
+                   ? (pitch > static_cast<T>(0) ? std::numbers::pi_v<T> - pitch : -std::numbers::pi_v<T> - pitch)
+                   : pitch;
     }
 
-    template <typename T>
+    template <std::floating_point T>
     inline T quaternion_to_yaw(Quaternion3D<T> const& quaternion) noexcept
     {
-        return std::atan2(2 * quaternion.x * quaternion.y - 2 * quaternion.w * quaternion.z,
-                          2 * quaternion.w * quaternion.w + 2 * quaternion.x * quaternion.x - 1);
+        return std::atan2(static_cast<T>(2) * (quaternion.x * quaternion.y + quaternion.w * quaternion.z),
+                          static_cast<T>(1) -
+                              static_cast<T>(2) * (quaternion.y * quaternion.y + quaternion.z * quaternion.z));
     }
 
-    template <typename T>
+    template <std::floating_point T>
     inline Vector3D<T> quaternion_to_roll_pitch_yaw(Quaternion3D<T> const& quaternion) noexcept
     {
         return Vector3D<T>{.x = quaternion_to_roll(quaternion),

@@ -98,9 +98,9 @@ namespace Utility {
 
         bool operator<=>(this Vector3D const& self, Vector3D const& other) noexcept = default;
 
-        T x{};
-        T y{};
-        T z{};
+        T x = {};
+        T y = {};
+        T z = {};
     };
 
     template <typename T>

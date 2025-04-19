@@ -16,8 +16,7 @@ namespace Utility {
                 self.predict(u, y);
                 self.correct(u, y);
                 return self.x;
-            }
-            catch (std::runtime_error const& error) {
+            } catch (std::runtime_error const& error) {
                 throw error;
             }
         }
@@ -27,8 +26,7 @@ namespace Utility {
             try {
                 self.x = (self.A * self.x) + (self.B * u);
                 self.x_covar = (self.A * self.x_covar * matrix_transpose(self.A)) + self.x_noise;
-            }
-            catch (std::runtime_error const& error) {
+            } catch (std::runtime_error const& error) {
                 throw error;
             }
         }
@@ -41,25 +39,24 @@ namespace Utility {
                 auto const K = self.x_covar * matrix_transpose(self.C) * matrix_inverse(res_covar);
                 self.x = self.x + (K * innovation);
                 self.x_covar = (make_eye<T, nX>() - K * self.C) * self.x_covar;
-            }
-            catch (std::runtime_error const& error) {
+            } catch (std::runtime_error const& error) {
                 throw error;
             }
         }
 
         /* state */
-        Mtx<nX, 1UL> x = Mtx<nX, 1UL>{};
-        Mtx<nX, nX> x_covar = Mtx<nX, nX>{};
+        Mtx<nX, 1UL> x = {};
+        Mtx<nX, nX> x_covar = {};
 
         /* state model */
-        Mtx<nX, nX> A = Mtx<nX, nX>{};
-        Mtx<nX, nU> B = Mtx<nX, nU>{};
-        Mtx<nY, nX> C = Mtx<nY, nX>{};
-        Mtx<1UL, nU> D = Mtx<1UL, nU>{};
+        Mtx<nX, nX> A = {};
+        Mtx<nX, nU> B = {};
+        Mtx<nY, nX> C = {};
+        Mtx<1UL, nU> D = {};
 
         /* state noise */
-        Mtx<nY, nY> y_noise{};
-        Mtx<nX, nX> x_noise{};
+        Mtx<nY, nY> y_noise = {};
+        Mtx<nX, nX> x_noise = {};
     };
 
 }; // namespace Utility

@@ -102,10 +102,10 @@ namespace Utility {
 
         bool operator<=>(this Quaternion3D const& self, Quaternion3D const& other) noexcept = default;
 
-        T w{};
-        T x{};
-        T y{};
-        T z{};
+        T w = {};
+        T x = {};
+        T y = {};
+        T z = {};
     };
 
     template <typename T>

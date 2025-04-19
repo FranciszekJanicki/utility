@@ -68,9 +68,9 @@ namespace Utility {
 
         bool operator<=>(this Rotation3D const& self, Rotation3D const& other) noexcept = default;
 
-        Vector3D<T> x{};
-        Vector3D<T> y{};
-        Vector3D<T> z{};
+        Vector3D<T> x = {};
+        Vector3D<T> y = {};
+        Vector3D<T> z = {};
     };
 
     template <typename T>

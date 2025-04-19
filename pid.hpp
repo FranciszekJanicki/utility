@@ -51,24 +51,24 @@ namespace Utility {
         }
 
         // basic PID parameters
-        T kP{};
-        T kI{};
-        T kD{};
-        T tD{};
+        T kP = {};
+        T kI = {};
+        T kD = {};
+        T tD = {};
 
         // anti windup parameters
-        T kC{};
-        T sat{};
+        T kC = {};
+        T sat = {};
 
         // basic PID internal state
-        T prev_e{};
-        T int_e{};
-        T dot_e{};
+        T prev_e = {};
+        T int_e = {};
+        T dot_e = {};
 
         // anti windup internal state
-        T sat_e{};
-        T prev_sat_e{};
-        T int_sat_e{};
+        T sat_e = {};
+        T prev_sat_e = {};
+        T int_sat_e = {};
     };
 
 }; // namespace Utility

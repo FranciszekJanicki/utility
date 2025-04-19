@@ -19,8 +19,7 @@ namespace Utility {
                 auto const int_e = Utility::integrate(e, std::exchange(self.prev_e, e), dt);
                 auto const u = self.Ki * int_e - self.Kx * x;
                 return u;
-            }
-            catch (std::runtime_error const& error) {
+            } catch (std::runtime_error const& error) {
                 throw error;
             }
         }
@@ -29,25 +28,24 @@ namespace Utility {
         {
             try {
                 return self.get_control(y_ref, x);
-            }
-            catch (std::runtime_error const& error) {
+            } catch (std::runtime_error const& error) {
                 throw error;
             }
         }
 
         /* state */
-        Mtx<nX, 1UL> x = Mtx<nX, 1UL>{};
-        T prev_e = T{};
+        Mtx<nX, 1UL> x = {};
+        T prev_e = {};
 
         /* state model */
-        Mtx<nX, nX> A = Mtx<nX, nX>{};
-        Mtx<nX, nU> B = Mtx<nX, nU>{};
-        Mtx<nY, nX> C = Mtx<nY, nX>{};
-        Mtx<1UL, nU> D = Mtx<1UL, nU>{};
+        Mtx<nX, nX> A = {};
+        Mtx<nX, nU> B = {};
+        Mtx<nY, nX> C = {};
+        Mtx<1UL, nU> D = {};
 
         /* state gain */
-        Mtx<nU, nX> Kx = Mtx<nU, nX>{};
-        Mtx<1UL, nY> Ki = Mtx<1UL, nY>{};
+        Mtx<nU, nX> Kx = {};
+        Mtx<1UL, nY> Ki = {};
     };
 
 }; // namespace Utility

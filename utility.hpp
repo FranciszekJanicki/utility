@@ -298,6 +298,28 @@ namespace Utility {
                            .z = quaternion_to_yaw(quaternion)};
     }
 
+    template <std::floating_point T>
+    inline T state_feedback(T const Ki, T const int_e, T const Kx, T const x) noexcept
+    {
+        return Ki * int_e - Kx * x;
+    }
+
+    template <std::floating_point T>
+    inline T state_feedback(T const y_ref, T const Kx, T const x) noexcept
+    {
+        return y_ref - Kx * x;
+    }
+
+    template <std::floating_point T>
+    inline T state_feedback(T const y_ref, T const Kx, T const x, T const Ki, T const int_e) noexcept
+    {
+        if (std::abs(Ki) < 0.001F32) {
+            return state_feedback(y_ref, Kx, x);
+        } else {
+            return state_feedback(Ki, int_e, Kx, x);
+        }
+    }
+
 }; // namespace Utility
 
 #endif // UTILITY_HPP

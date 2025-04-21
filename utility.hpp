@@ -305,7 +305,7 @@ namespace Utility {
     }
 
     template <std::floating_point T>
-    inline T state_feedback(T const y_ref, T const Kx, T const x) noexcept
+    inline T x(T const y_ref, T const Kx, T const x) noexcept
     {
         return y_ref - Kx * x;
     }

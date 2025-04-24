@@ -10,7 +10,7 @@
 #include <stdexcept>
 #include <utility>
 
-namespace Utility {
+namespace utility {
 
     template <typename T, std::size_t N, std::size_t M>
     struct Matrix {
@@ -160,7 +160,8 @@ namespace Utility {
             try {
                 self = matrix_product(self, matrix_inverse(other));
                 return self;
-            } catch (std::runtime_error const& error) {
+            }
+            catch (std::runtime_error const& error) {
                 throw error;
             }
         }
@@ -187,7 +188,9 @@ namespace Utility {
     }
 
     template <typename T, std::size_t N>
-    Matrix<T, N - 1, N - 1> matrix_minor(Matrix<T, N, N> const& matrix, std::size_t const row, std::size_t const column)
+    Matrix<T, N - 1, N - 1> matrix_minor(Matrix<T, N, N> const& matrix,
+                                         std::size_t const row,
+                                         std::size_t const column)
     {
         if (row >= N || column >= N) {
             throw std::runtime_error{"Wrong dimensions"};
@@ -227,8 +230,10 @@ namespace Utility {
             for (std::size_t i{}; i < N; ++i) {
                 for (std::size_t j{}; j < N; ++j) {
                     try {
-                        result[i, j] = ((i + j) % 2 == 0 ? 1 : -1) * matrix_det(matrix_minor(matrix, i, j));
-                    } catch (std::runtime_error const& error) {
+                        result[i, j] =
+                            ((i + j) % 2 == 0 ? 1 : -1) * matrix_det(matrix_minor(matrix, i, j));
+                    }
+                    catch (std::runtime_error const& error) {
                         throw error;
                     }
                 }
@@ -242,7 +247,8 @@ namespace Utility {
     {
         try {
             return matrix_transpose(matrix_complement(matrix));
-        } catch (std::runtime_error const& error) {
+        }
+        catch (std::runtime_error const& error) {
             throw error;
         }
     }
@@ -274,10 +280,12 @@ namespace Utility {
             try {
                 T det{};
                 for (std::size_t i{}; i < N; ++i) {
-                    det += (i % 2 == 0 ? 1 : -1) * matrix[0, i] * matrix_det(matrix_minor(matrix, 0, i));
+                    det += (i % 2 == 0 ? 1 : -1) * matrix[0, i] *
+                           matrix_det(matrix_minor(matrix, 0, i));
                 }
                 return det;
-            } catch (std::runtime_error const& error) {
+            }
+            catch (std::runtime_error const& error) {
                 throw error;
             }
         }
@@ -288,7 +296,8 @@ namespace Utility {
     {
         try {
             return matrix_scale(matrix_adjoint(matrix), 1 / matrix_det(matrix));
-        } catch (std::runtime_error const& error) {
+        }
+        catch (std::runtime_error const& error) {
             throw error;
         }
     }
@@ -298,7 +307,8 @@ namespace Utility {
     {
         try {
             return matrix_transpose(matrix_lower_triangular(matrix));
-        } catch (std::runtime_error const& error) {
+        }
+        catch (std::runtime_error const& error) {
             throw error;
         }
     }
@@ -344,7 +354,8 @@ namespace Utility {
     }
 
     template <typename T, std::size_t N, std::size_t M>
-    Matrix<T, N, M> matrix_difference(Matrix<T, N, M> const& left, Matrix<T, N, M> const& right) noexcept
+    Matrix<T, N, M> matrix_difference(Matrix<T, N, M> const& left,
+                                      Matrix<T, N, M> const& right) noexcept
 
     {
         Matrix<T, N, M> result;
@@ -369,7 +380,8 @@ namespace Utility {
     }
 
     template <typename T, std::size_t N, std::size_t M, std::size_t P>
-    Matrix<T, N, P> matrix_product(Matrix<T, N, M> const& left, Matrix<T, M, P> const& right) noexcept
+    Matrix<T, N, P> matrix_product(Matrix<T, N, M> const& left,
+                                   Matrix<T, M, P> const& right) noexcept
 
     {
         Matrix<T, N, P> result;
@@ -467,7 +479,8 @@ namespace Utility {
     {
         try {
             return matrix_product(left, matrix_inverse(right));
-        } catch (std::runtime_error const& error) {
+        }
+        catch (std::runtime_error const& error) {
             throw error;
         }
     }
@@ -478,6 +491,6 @@ namespace Utility {
         return matrix_power(matrix, power);
     }
 
-}; // namespace Utility
+}; // namespace utility
 
 #endif // MATRIX_HPP

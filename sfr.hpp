@@ -3,7 +3,7 @@
 
 #include "matrix.hpp"
 
-namespace Utility {
+namespace utility {
 
     template <std::floating_point T, std::size_t nX, std::size_t nY = 1UL, std::size_t nU = nY>
     struct SFR {
@@ -11,15 +11,19 @@ namespace Utility {
         template <std::size_t N, std::size_t M>
         using Mtx = Matrix<T, N, M>;
 
-        Mtx<nU, 1UL>
-        get_control(this SFR& self, Mtx<nY, 1UL> const& y_ref, Mtx<nY, 1UL> const& y, Mtx<nX, 1UL> const& x, T const dt)
+        Mtx<nU, 1UL> get_control(this SFR& self,
+                                 Mtx<nY, 1UL> const& y_ref,
+                                 Mtx<nY, 1UL> const& y,
+                                 Mtx<nX, 1UL> const& x,
+                                 T const dt)
         {
             try {
                 auto const e = y_ref - y;
-                auto const int_e = Utility::integrate(e, std::exchange(self.prev_e, e), dt);
+                auto const int_e = utility::integrate(e, std::exchange(self.prev_e, e), dt);
                 auto const u = self.Ki * int_e - self.Kx * x;
                 return u;
-            } catch (std::runtime_error const& error) {
+            }
+            catch (std::runtime_error const& error) {
                 throw error;
             }
         }
@@ -28,7 +32,8 @@ namespace Utility {
         {
             try {
                 return self.get_control(y_ref, x);
-            } catch (std::runtime_error const& error) {
+            }
+            catch (std::runtime_error const& error) {
                 throw error;
             }
         }
@@ -48,6 +53,6 @@ namespace Utility {
         Mtx<1UL, nY> Ki = {};
     };
 
-}; // namespace Utility
+}; // namespace utility
 
 #endif // SFR_HPP

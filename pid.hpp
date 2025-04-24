@@ -5,7 +5,7 @@
 #include <concepts>
 #include <utility>
 
-namespace Utility {
+namespace utility {
 
     template <std::floating_point T>
     struct PID {
@@ -68,20 +68,20 @@ namespace Utility {
 
         T get_d(this PID& self, T const e, T const dt) noexcept
         {
-            self.dot_e = Utility::differentiate(e, self.prev_e, dt, self.prev_e, self.tD);
+            self.dot_e = utility::differentiate(e, self.prev_e, dt, self.prev_e, self.tD);
 
             return self.kD * self.dot_e;
         }
 
         T get_i(this PID& self, T const e, T const dt) noexcept
         {
-            self.int_e += Utility::integrate(e, self.prev_e, dt);
-            self.int_sat_e += Utility::integrate(self.sat_e, self.prev_sat_e, dt);
+            self.int_e += utility::integrate(e, self.prev_e, dt);
+            self.int_sat_e += utility::integrate(self.sat_e, self.prev_sat_e, dt);
 
             return self.kI * self.int_e - self.kC * self.int_sat_e;
         }
     };
 
-}; // namespace Utility
+}; // namespace utility
 
 #endif // PID_HPP

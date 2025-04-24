@@ -9,7 +9,7 @@
 #include <tuple>
 #include <utility>
 
-namespace Utility {
+namespace utility {
 
     template <typename T>
     struct Quaternion3D {
@@ -27,7 +27,8 @@ namespace Utility {
 
         T magnitude(this Quaternion3D const& self) noexcept
         {
-            return std::sqrt(std::pow(self.w, 2) + std::pow(self.x, 2) + std::pow(self.y, 2) + std::pow(self.z, 2));
+            return std::sqrt(std::pow(self.w, 2) + std::pow(self.x, 2) + std::pow(self.y, 2) +
+                             std::pow(self.z, 2));
         }
 
         Quaternion3D normalized(this Quaternion3D const& self) noexcept
@@ -100,7 +101,8 @@ namespace Utility {
                                    static_cast<C>(self.z)};
         }
 
-        bool operator<=>(this Quaternion3D const& self, Quaternion3D const& other) noexcept = default;
+        bool operator<=>(this Quaternion3D const& self,
+                         Quaternion3D const& other) noexcept = default;
 
         T w = {};
         T x = {};
@@ -111,22 +113,29 @@ namespace Utility {
     template <typename T>
     Quaternion3D<T> operator+(Quaternion3D<T> const& left, Quaternion3D<T> const& right) noexcept
     {
-        return Quaternion3D<T>{left.w + right.w, left.x + right.x, left.y + right.y, left.z + right.z};
+        return Quaternion3D<T>{left.w + right.w,
+                               left.x + right.x,
+                               left.y + right.y,
+                               left.z + right.z};
     }
 
     template <typename T>
     Quaternion3D<T> operator-(Quaternion3D<T> const& left, Quaternion3D<T> const& right) noexcept
     {
-        return Quaternion3D<T>{left.w - right.w, left.x - right.x, left.y - right.y, left.z + right.z};
+        return Quaternion3D<T>{left.w - right.w,
+                               left.x - right.x,
+                               left.y - right.y,
+                               left.z + right.z};
     }
 
     template <typename T>
     Quaternion3D<T> operator*(Quaternion3D<T> const& left, Quaternion3D<T> const& right) noexcept
     {
-        return Quaternion3D<T>{left.w * right.w - left.x * right.x - left.y * right.y - left.z * right.z,
-                               left.w * right.x + left.x * right.w + left.y * right.z - left.z * right.y,
-                               left.w * right.y - left.x * right.z + left.y * right.w + left.z * right.x,
-                               left.w * right.z + left.x * right.y - left.y * right.x + left.z * right.w};
+        return Quaternion3D<T>{
+            left.w * right.w - left.x * right.x - left.y * right.y - left.z * right.z,
+            left.w * right.x + left.x * right.w + left.y * right.z - left.z * right.y,
+            left.w * right.y - left.x * right.z + left.y * right.w + left.z * right.x,
+            left.w * right.z + left.x * right.y - left.y * right.x + left.z * right.w};
     }
 
     template <typename T>
@@ -157,6 +166,6 @@ namespace Utility {
                                quaternion.z / factor};
     }
 
-}; // namespace Utility
+}; // namespace utility
 
 #endif // QUATERNION3D_HPP

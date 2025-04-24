@@ -9,7 +9,7 @@
 #include <stdexcept>
 #include <utility>
 
-namespace Utility {
+namespace utility {
 
     template <typename T>
     struct Vector3D {
@@ -93,7 +93,9 @@ namespace Utility {
         template <typename C>
         explicit operator Vector3D<C>(this Vector3D const& self) noexcept
         {
-            return Vector3D<C>{static_cast<C>(self.x), static_cast<C>(self.y), static_cast<C>(self.z)};
+            return Vector3D<C>{static_cast<C>(self.x),
+                               static_cast<C>(self.y),
+                               static_cast<C>(self.z)};
         }
 
         bool operator<=>(this Vector3D const& self, Vector3D const& other) noexcept = default;
@@ -137,6 +139,6 @@ namespace Utility {
         return Vector3D<T>{vector.x / factor, vector.y / factor, vector.z / factor};
     }
 
-}; // namespace Utility
+}; // namespace utility
 
 #endif // VECTOR3D_HPP

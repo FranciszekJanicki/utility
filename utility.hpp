@@ -143,8 +143,11 @@ namespace utility {
     }
 
     template <std::floating_point From, std::floating_point To>
-    inline To
-    rescale(From const from_value, From const from_min, From const from_max, To const to_min, To const to_max) noexcept
+    inline To rescale(From const from_value,
+                      From const from_min,
+                      From const from_max,
+                      To const to_min,
+                      To const to_max) noexcept
     {
         return (std::clamp(from_value, from_min, from_max) - from_min) * (to_max - to_min) / (from_max - from_min) +
                to_min;
@@ -317,6 +320,39 @@ namespace utility {
             return state_feedback(y_ref, Kx, x);
         } else {
             return state_feedback(Ki, int_e, Kx, x);
+        }
+    }
+
+    inline void frequency_to_prescaler_and_period(std::uint32_t const frequency,
+                                                  std::uint32_t const clock_hz,
+                                                  std::uint32_t const clock_div,
+                                                  std::uint32_t const max_prescaler,
+                                                  std::uint32_t const max_period,
+                                                  std::uint32_t& prescaler,
+                                                  std::uint32_t& period) noexcept
+    {
+        constexpr auto MAX_PERIOD = 0xFFFFUL;
+        constexpr auto MAX_PRESCALER = 0xFFFFUL;
+
+        if (frequency > 0UL) {
+            period = clock_hz / frequency;
+            prescaler = 0UL;
+
+            while (period > MAX_PERIOD && prescaler < MAX_PRESCALER) {
+                prescaler += 1UL;
+                period = clock_hz / ((prescaler + 1UL) * (clock_div + 1UL) * frequency);
+            }
+
+            period = std::min(period, MAX_PERIOD);
+
+            if (period == MAX_PERIOD) {
+                prescaler = clock_hz / (MAX_PERIOD * frequency) - 1UL;
+                if (prescaler > MAX_PRESCALER) {
+                    prescaler = MAX_PRESCALER;
+                }
+            }
+
+            prescaler = std::min(prescaler, MAX_PRESCALER);
         }
     }
 

@@ -331,28 +331,25 @@ namespace utility {
                                                   std::uint32_t& prescaler,
                                                   std::uint32_t& period) noexcept
     {
-        constexpr auto MAX_PERIOD = 0xFFFFUL;
-        constexpr auto MAX_PRESCALER = 0xFFFFUL;
-
         if (frequency > 0UL) {
             period = clock_hz / frequency;
             prescaler = 0UL;
 
-            while (period > MAX_PERIOD && prescaler < MAX_PRESCALER) {
+            while (period > max_period && prescaler < max_prescaler) {
                 prescaler += 1UL;
                 period = clock_hz / ((prescaler + 1UL) * (clock_div + 1UL) * frequency);
             }
 
-            period = std::min(period, MAX_PERIOD);
+            period = std::min(period, max_period);
 
-            if (period == MAX_PERIOD) {
-                prescaler = clock_hz / (MAX_PERIOD * frequency) - 1UL;
-                if (prescaler > MAX_PRESCALER) {
-                    prescaler = MAX_PRESCALER;
+            if (period == max_period) {
+                prescaler = clock_hz / (max_period * frequency) - 1UL;
+                if (prescaler > max_prescaler) {
+                    prescaler = max_prescaler;
                 }
             }
 
-            prescaler = std::min(prescaler, MAX_PRESCALER);
+            prescaler = std::min(prescaler, max_prescaler);
         }
     }
 

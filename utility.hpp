@@ -1,5 +1,5 @@
-#ifndef UTILITY_HPP
-#define UTILITY_HPP
+#ifndef UTILITY_UTILITY_HPP
+#define UTILITY_UTILITY_HPP
 
 #include "quaternion3d.hpp"
 #include "vector3d.hpp"
@@ -355,4 +355,4 @@ namespace utility {
 
 }; // namespace utility
 
-#endif // UTILITY_HPP
+#endif // UTILITY_UTILITY_HPP

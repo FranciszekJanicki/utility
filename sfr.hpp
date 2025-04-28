@@ -1,5 +1,5 @@
-#ifndef SFR_HPP
-#define SFR_HPP
+#ifndef UTILITY_SFR_HPP
+#define UTILITY_SFR_HPP
 
 #include "matrix.hpp"
 
@@ -22,8 +22,7 @@ namespace utility {
                 auto const int_e = utility::integrate(e, std::exchange(self.prev_e, e), dt);
                 auto const u = self.Ki * int_e - self.Kx * x;
                 return u;
-            }
-            catch (std::runtime_error const& error) {
+            } catch (std::runtime_error const& error) {
                 throw error;
             }
         }
@@ -32,8 +31,7 @@ namespace utility {
         {
             try {
                 return self.get_control(y_ref, x);
-            }
-            catch (std::runtime_error const& error) {
+            } catch (std::runtime_error const& error) {
                 throw error;
             }
         }
@@ -55,4 +53,4 @@ namespace utility {
 
 }; // namespace utility
 
-#endif // SFR_HPP
+#endif // UTILITY_SFR_HPP

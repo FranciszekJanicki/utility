@@ -1,5 +1,5 @@
-#ifndef PID_HPP
-#define PID_HPP
+#ifndef UTILITY_PID_HPP
+#define UTILITY_PID_HPP
 
 #include "utility.hpp"
 #include <concepts>
@@ -84,4 +84,4 @@ namespace utility {
 
 }; // namespace utility
 
-#endif // PID_HPP
+#endif // UTILITY_PID_HPP

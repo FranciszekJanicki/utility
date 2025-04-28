@@ -1,5 +1,5 @@
-#ifndef VECTOR3D_HPP
-#define VECTOR3D_HPP
+#ifndef UTILITY_VECTOR3D_HPP
+#define UTILITY_VECTOR3D_HPP
 
 #include "quaternion3d.hpp"
 #include <cmath>
@@ -93,9 +93,7 @@ namespace utility {
         template <typename C>
         explicit operator Vector3D<C>(this Vector3D const& self) noexcept
         {
-            return Vector3D<C>{static_cast<C>(self.x),
-                               static_cast<C>(self.y),
-                               static_cast<C>(self.z)};
+            return Vector3D<C>{static_cast<C>(self.x), static_cast<C>(self.y), static_cast<C>(self.z)};
         }
 
         bool operator<=>(this Vector3D const& self, Vector3D const& other) noexcept = default;
@@ -141,4 +139,4 @@ namespace utility {
 
 }; // namespace utility
 
-#endif // VECTOR3D_HPP
+#endif // UTILITY_VECTOR3D_HPP

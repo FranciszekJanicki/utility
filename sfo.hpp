@@ -1,5 +1,5 @@
-#ifndef SFO_HPP
-#define SFO_HPP
+#ifndef UTILITY_SFO_HPP
+#define UTILITY_SFO_HPP
 
 #include "matrix.hpp"
 
@@ -11,16 +11,13 @@ namespace utility {
         template <std::size_t N, std::size_t M>
         using Mtx = Matrix<T, N, M>;
 
-        Mtx<nX, 1UL> get_estimated_state(this SFO& self,
-                                         Mtx<nU, 1UL> const& u,
-                                         Mtx<nY, 1UL> const& y)
+        Mtx<nX, 1UL> get_estimated_state(this SFO& self, Mtx<nU, 1UL> const& u, Mtx<nY, 1UL> const& y)
         {
             try {
                 self.predict(u, y);
                 self.correct(u, y);
                 return self.x;
-            }
-            catch (std::runtime_error const& error) {
+            } catch (std::runtime_error const& error) {
                 throw error;
             }
         }
@@ -29,8 +26,7 @@ namespace utility {
         {
             try {
                 return self.get_estimated_state(u, y);
-            }
-            catch (std::runtime_error const& error) {
+            } catch (std::runtime_error const& error) {
                 throw error;
             }
         }
@@ -40,8 +36,7 @@ namespace utility {
             try {
                 auto const x_hat = self.A * self.x + self.B * u;
                 self.x = x_hat;
-            }
-            catch (std::runtime_error const& error) {
+            } catch (std::runtime_error const& error) {
                 throw error;
             }
         }
@@ -52,8 +47,7 @@ namespace utility {
                 auto const y_hat = self.C * self.x + self.D * u;
                 auto const x = self.x + self.K * (y - y_hat);
                 self.x = x;
-            }
-            catch (std::runtime_error const& error) {
+            } catch (std::runtime_error const& error) {
                 throw error;
             }
         }
@@ -73,4 +67,4 @@ namespace utility {
 
 }; // namespace utility
 
-#endif // SFO_HPP
+#endif // UTILITY_SFO_HPP

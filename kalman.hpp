@@ -10,7 +10,9 @@ namespace utility {
         template <std::size_t N, std::size_t M>
         using Mtx = Matrix<T, N, M>;
 
-        [[nodiscard]] Mtx<nX, 1UL> operator()(this Kalman& self, Mtx<nU, 1UL> const& u, Mtx<nY, 1UL> const& y)
+        [[nodiscard]] Mtx<nX, 1UL> operator()(this Kalman& self,
+                                              Mtx<nU, 1UL> const& u,
+                                              Mtx<nY, 1UL> const& y)
         {
             try {
                 self.predict(u, y);
@@ -35,7 +37,8 @@ namespace utility {
         {
             try {
                 auto const innovation = y - (self.C * self.x + self.D * u);
-                auto const res_covar = (self.C * self.x_covar * matrix_transpose(self.C)) + self.y_noise;
+                auto const res_covar =
+                    (self.C * self.x_covar * matrix_transpose(self.C)) + self.y_noise;
                 auto const K = self.x_covar * matrix_transpose(self.C) * matrix_inverse(res_covar);
                 self.x = self.x + (K * innovation);
                 self.x_covar = (make_eye<T, nX>() - K * self.C) * self.x_covar;

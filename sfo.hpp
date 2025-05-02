@@ -11,7 +11,9 @@ namespace utility {
         template <std::size_t N, std::size_t M>
         using Mtx = Matrix<T, N, M>;
 
-        Mtx<nX, 1UL> get_estimated_state(this SFO& self, Mtx<nU, 1UL> const& u, Mtx<nY, 1UL> const& y)
+        Mtx<nX, 1UL> get_estimated_state(this SFO& self,
+                                         Mtx<nU, 1UL> const& u,
+                                         Mtx<nY, 1UL> const& y)
         {
             try {
                 self.predict(u, y);

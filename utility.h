@@ -4,19 +4,19 @@
 #include "stdint.h"
 
 typedef struct {
-  uint8_t data[2];
+    uint8_t data[2];
 } uint8x2_t;
 
 typedef struct {
-  uint8_t data[4];
+    uint8_t data[4];
 } uint8x4_t;
 
 typedef struct {
-  uint8_t data[8];
+    uint8_t data[8];
 } uint8x8_t;
 
 typedef float float32_t;
-typedef float float64_t;
+typedef double float64_t;
 
 uint16_t uint8x2_le_to_uint16(uint8x2_t uint8x2);
 uint16_t uint8x2_be_to_uint16(uint8x2_t uint8x2);

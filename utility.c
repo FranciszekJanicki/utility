@@ -99,8 +99,6 @@ uint8x8_t uint64_to_uint8x8_be(uint64_t uint64)
                                 [7] = (uint8_t)uint64}};
 }
 
-typedef float float32_t;
-
 uint32_t float32_to_uint32(float32_t float32)
 {
     uint32_t uint32;

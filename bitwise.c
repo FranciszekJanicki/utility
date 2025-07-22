@@ -1,4 +1,4 @@
-#include "bits.h"
+#include "bitwise.h"
 #include "string.h"
 
 uint16_t uint8x2_le_to_uint16(uint8x2_t uint8x2)

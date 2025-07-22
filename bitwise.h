@@ -1,7 +1,11 @@
-#ifndef UTILITY_BITS_H
-#define UTILITY_BITS_H
+#ifndef UTILITY_BITWISE_H
+#define UTILITY_BITWISE_H
 
 #include "stdint.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct {
     uint8_t data[2];
@@ -52,4 +56,8 @@ float64_t uint64_to_float64(uint64_t uint64);
 float64_t uint8x8_le_to_float64(uint8x8_t uint8x8);
 float64_t uint8x8_be_to_float64(uint8x8_t uint8x8);
 
-#endif // UTILITY_BITS_H
+#ifdef __cplusplus
+}
+#endif
+
+#endif // UTILITY_BITWISE_H

@@ -4,6 +4,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
     uint8_t buffer[100];
 } allocator_storage_stack_t;
@@ -31,5 +35,9 @@ typedef struct {
 
 void* allocator_new(allocator_t* allocator, size_t size);
 void allocator_delete(allocator_t* allocator);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // UTILITY_ALLOCATOR_H

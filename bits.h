@@ -4,15 +4,15 @@
 #include "stdint.h"
 
 typedef struct {
-  uint8_t data[2];
+    uint8_t data[2];
 } uint8x2_t;
 
 typedef struct {
-  uint8_t data[4];
+    uint8_t data[4];
 } uint8x4_t;
 
 typedef struct {
-  uint8_t data[8];
+    uint8_t data[8];
 } uint8x8_t;
 
 typedef float float32_t;

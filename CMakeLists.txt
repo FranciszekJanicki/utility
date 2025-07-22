@@ -1,7 +1,8 @@
 add_library(utility STATIC)
 
 target_sources(utility PRIVATE 
-    "utility.c"
+    "bits.c"
+    "allocator.c"
 )
 
 target_include_directories(utility PUBLIC

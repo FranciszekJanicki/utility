@@ -1,18 +1,18 @@
-#ifndef UTILITY_UTILITY_H
-#define UTILITY_UTILITY_H
+#ifndef UTILITY_BITS_H
+#define UTILITY_BITS_H
 
 #include "stdint.h"
 
 typedef struct {
-    uint8_t data[2];
+  uint8_t data[2];
 } uint8x2_t;
 
 typedef struct {
-    uint8_t data[4];
+  uint8_t data[4];
 } uint8x4_t;
 
 typedef struct {
-    uint8_t data[8];
+  uint8_t data[8];
 } uint8x8_t;
 
 typedef float float32_t;
@@ -52,4 +52,4 @@ float64_t uint64_to_float64(uint64_t uint64);
 float64_t uint8x8_le_to_float64(uint8x8_t uint8x8);
 float64_t uint8x8_be_to_float64(uint8x8_t uint8x8);
 
-#endif // UTILITY_UTILITY_H
+#endif // UTILITY_BITS_H

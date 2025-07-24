@@ -4,6 +4,7 @@ target_sources(utility PRIVATE
     "bitwise.c"
     "allocator.c"
     "manager.h"
+    "checksum.c"
 )
 
 target_include_directories(utility PUBLIC

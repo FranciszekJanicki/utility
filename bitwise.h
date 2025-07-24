@@ -8,15 +8,15 @@ extern "C" {
 #endif
 
 typedef struct {
-    uint8_t data[2];
+  uint8_t data[2];
 } uint8x2_t;
 
 typedef struct {
-    uint8_t data[4];
+  uint8_t data[4];
 } uint8x4_t;
 
 typedef struct {
-    uint8_t data[8];
+  uint8_t data[8];
 } uint8x8_t;
 
 typedef float float32_t;
@@ -55,6 +55,16 @@ uint8x8_t float64_to_uint8x8_le(float64_t float64);
 float64_t uint64_to_float64(uint64_t uint64);
 float64_t uint8x8_le_to_float64(uint8x8_t uint8x8);
 float64_t uint8x8_be_to_float64(uint8x8_t uint8x8);
+
+uint8_t uint8_reflect(uint8_t uint8);
+uint16_t uint16_reflect(uint16_t uint16);
+uint32_t uint32_reflect(uint32_t uint32);
+uint64_t uint64_reflect(uint64_t uint64);
+
+uint8_t uint8_bitwidth(uint8_t uint8);
+uint8_t uint16_bitwidth(uint16_t uint16);
+uint8_t uint32_bitwidth(uint32_t uint32);
+uint8_t uint64_bitwidth(uint64_t uint64);
 
 #ifdef __cplusplus
 }

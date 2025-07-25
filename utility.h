@@ -3,6 +3,7 @@
 
 #include "allocator.h"
 #include "bitwise.h"
+#include "checksum.h"
 #include "manager.h"
 
 #endif // UTILITY_UTILITY_H

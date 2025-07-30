@@ -8,7 +8,6 @@ extern "C" {
 #include "allocator.h"
 #include "bitwise.h"
 #include "checksum.h"
-#include "manager.h"
 
 #ifdef __cplusplus
 }
